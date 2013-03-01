@@ -30,7 +30,7 @@ define apache::config::file(
         notify => Service[apache],
         owner => $::apache::params::user, 
         group => $::apache::params::group, 
-        mode => 0644;
+        mode => 0644,
         require => Package['httpd'],
     }
     
