@@ -200,6 +200,46 @@ class apache::params inherits ::apache::version {
     $fastcgi_lib_path     = undef # TODO: revisit
     $mime_support_package = 'misc/mime-support'
     $mime_types_config    = '/usr/local/etc/mime.types'
+  } elsif $::osfamily == 'Suse' {
+    $user                  = 'wwwrun'
+    $group                 = 'www'
+    $root_group            = 'root'
+    $apache_name           = 'apache2'
+    $service_name          = 'apache2'
+    $httpd_dir             = '/etc/apache2'
+    $server_root           = '/srv/www'
+    $conf_dir              = $httpd_dir
+    $confd_dir             = "${httpd_dir}/conf.d"
+    $mod_dir               = $httpd_dir
+    $vhost_dir             = "${httpd_dir}/vhosts.d"
+    $conf_file             = 'httpd.conf'
+    $ports_file            = "${httpd_dir}/listen_conf.conf"
+    $logroot               = '/var/log/apache2'
+    $lib_path              = '/usr/lib64/apache2'
+    $mpm_module            = 'worker'
+    $dev_packages          = ['libaprutil1-dev', 'libapr1-dev', 'apache2-prefork-dev']
+    $default_ssl_cert      = '/etc/apache2/ssl.crt/snakeoil-rsa.crt'
+    $default_ssl_key       = '/etc/apache2/ssl.key/snakeoil-rsa.key'
+    $ssl_certs_dir         = '/etc/apache2/ssl.crt'
+    $passenger_conf_file   = 'passenger.conf'
+    $passenger_conf_package_file = undef
+    $passenger_root        = '/usr'
+    $passenger_ruby        = '/usr/bin/ruby'
+    $suphp_addhandler      = 'x-httpd-php'
+    $suphp_engine          = 'off'
+    $suphp_configpath      = '/etc/php5/apache2'
+    $mod_packages          = {
+      'auth_kerb'   => 'apache2-mod_auth_kerb',
+      'dav_svn'     => 'apache2-mod_dav_svn',
+      'fcgid'       => 'apache2-mod_fcgid',
+      'perl'        => 'apache2-mod_perl',
+      'php5'        => 'apache2-mod_php5',
+      'proxy_html'  => 'apache2-mod_proxy_html',
+      'python'      => 'apache2-mod_python',
+      'wsgi'        => 'apache2-mod_wsgi',
+      'xsendfile'   => 'apache2-mod_xsendfile',
+    }
+    $mod_libs              = {}
   } else {
     fail("Class['apache::params']: Unsupported osfamily: ${::osfamily}")
   }
