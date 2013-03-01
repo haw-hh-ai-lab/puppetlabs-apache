@@ -7,7 +7,8 @@ define apache::config::file(
     $ensure = present,
     $source = undef,
     $content = undef,
-    $destination = undef
+    $destination = undef,
+    $target = undef,
 ){
     include apache::params
 
@@ -33,30 +34,39 @@ define apache::config::file(
         require => Package['httpd'],
     }
     
-    if $ensure == 'present' {
-    
-      if $content {
-         File["apache_${name}"]{
-            content => $content,
-         }
-      } elsif $source {
-         File["apache_${name}"]{
-            source => $source,
-         }
-      } else {
-         File["apache_${name}"]{
-             source => [
-                    "puppet:///modules/site_apache/${confdir}/${::fqdn}/${name}",
-                    "puppet:///modules/site_apache/${confdir}/${apache::cluster_node}/${name}",
-                    "puppet:///modules/site_apache/${confdir}/${::operatingsystem}.${::lsbdistcodename}/${name}",
-                    "puppet:///modules/site_apache/${confdir}/${::operatingsystem}/${name}",
-                    "puppet:///modules/site_apache/${confdir}/${name}",
-                    "puppet:///modules/apache/${confdir}/${::operatingsystem}.${::lsbdistcodename}/${name}",
-                    "puppet:///modules/apache/${confdir}/${::operatingsystem}/${name}",
-                    "puppet:///modules/apache/${confdir}/${name}"
-                ],
-         }
-      }
+    case $ensure {
+       'present' : {
+            if $content {
+                File["apache_${name}"]{
+                    content => $content,
+                }
+            } elsif $source {
+                File["apache_${name}"]{
+                    source => $source,
+               }
+            } else {
+                File["apache_${name}"]{
+                    source => [
+                        "puppet:///modules/site_apache/${confdir}/${::fqdn}/${name}",
+                        "puppet:///modules/site_apache/${confdir}/${apache::cluster_node}/${name}",
+                        "puppet:///modules/site_apache/${confdir}/${::operatingsystem}.${::lsbdistcodename}/${name}",
+                        "puppet:///modules/site_apache/${confdir}/${::operatingsystem}/${name}",
+                        "puppet:///modules/site_apache/${confdir}/${name}",
+                        "puppet:///modules/apache/${confdir}/${::operatingsystem}.${::lsbdistcodename}/${name}",
+                        "puppet:///modules/apache/${confdir}/${::operatingsystem}/${name}",
+                        "puppet:///modules/apache/${confdir}/${name}"
+                    ],
+                }
+            }
+       
+       }
+       'link' : {
+           if $target {
+                File["apache_${name}"]{
+                    target => $target
+                }
+           }
+       }
     }
-
+        
 }
