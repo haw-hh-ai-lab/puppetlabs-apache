@@ -2,14 +2,16 @@
 # wrapper for apache::config::file
 define apache::config::global(
     $ensure = present,
-    $source = 'absent',
-    $content = 'absent',
-    $destination = 'absent'
+    $source = undef,
+    $content = undef,
+    $destination = undef,
+    $target = undef,
 ){
     apache::config::file { "${name}":
         ensure => $ensure,
         source => $source,
         content => $content,
         destination => $destination,
+        target => $target,
     }
 }
