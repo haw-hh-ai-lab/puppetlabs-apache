@@ -27,7 +27,7 @@ define apache::config::file(
     file{"apache_${name}":
         ensure => $ensure,
         path => $real_destination,
-        notify => Service[apache],
+        notify => Service['httpd'],
         owner => $::apache::params::user, 
         group => $::apache::params::group, 
         mode => 0644,
