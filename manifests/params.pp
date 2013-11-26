@@ -32,6 +32,7 @@ class apache::params {
   $vhost_name    = '*'
   
   if $::osfamily == 'redhat' or $::operatingsystem == 'amazon' {
+    $main_docroot          = '/var/www/html'
     $user                  = 'apache'
     $group                 = 'apache'
     $apache_name           = 'httpd'
@@ -66,6 +67,7 @@ class apache::params {
       'shibboleth' => 'mod_shib',
     }
   } elsif $::osfamily == 'debian' {
+    $main_docroot          = '/var/www'
     $user                  = 'www-data'
     $group                 = 'www-data'
     $apache_name           = 'apache2'
@@ -90,6 +92,7 @@ class apache::params {
     $mod_libs              = {}
     $mod_identifiers       = {}
   } elsif $::osfamily == 'Suse' {
+    $main_docroot          = '/srv/www/htdocs'
     $user                  = 'wwwrun'
     $group                 = 'www'
     $apache_name           = 'apache2'
