@@ -10,28 +10,21 @@ define apache::config::file(
     $destination = undef,
     $target = undef,
 ){
-    include apache::params
-
-    if $::apache::params::conf_dir {
-      $local_conf_dir = "${::apache::params::conf_dir}"
-    } else {
-      $local_conf_dir = '/etc/apache2/conf.d/'
-    }
 
     if $destination {
       $real_destination = $destination
     } else {
-      $real_destination = "${::apache::params::conf_dir}/${name}" 
+      $real_destination = "${::apache::params::confd_dir}/${name}" 
     }
         
     file{"apache_${name}":
         ensure => $ensure,
         path => $real_destination,
-        notify => Service['httpd'],
+        notify => Service[$::apache::params::service_name],
         owner => $::apache::params::user, 
         group => $::apache::params::group, 
         mode => 0644,
-        require => Package['httpd'],
+        require => Package[$::apache::params::service_name],
     }
     
     case $ensure {
@@ -45,18 +38,7 @@ define apache::config::file(
                     source => $source,
                }
             } else {
-                File["apache_${name}"]{
-                    source => [
-                        "puppet:///modules/site_apache/${confdir}/${::fqdn}/${name}",
-                        "puppet:///modules/site_apache/${confdir}/${apache::cluster_node}/${name}",
-                        "puppet:///modules/site_apache/${confdir}/${::operatingsystem}.${::lsbdistcodename}/${name}",
-                        "puppet:///modules/site_apache/${confdir}/${::operatingsystem}/${name}",
-                        "puppet:///modules/site_apache/${confdir}/${name}",
-                        "puppet:///modules/apache/${confdir}/${::operatingsystem}.${::lsbdistcodename}/${name}",
-                        "puppet:///modules/apache/${confdir}/${::operatingsystem}/${name}",
-                        "puppet:///modules/apache/${confdir}/${name}"
-                    ],
-                }
+              fail("apache::conf:file type must either contain source or content parameter")
             }
        
        }
@@ -65,6 +47,8 @@ define apache::config::file(
                 File["apache_${name}"]{
                     target => $target
                 }
+           } else {
+             fail("not target supplied for ensure => link")
            }
        }
     }
